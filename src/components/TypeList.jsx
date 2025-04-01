@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ListGroup, Container } from 'react-bootstrap';
+import { Container, Button } from 'react-bootstrap';
 
 function TypeList() {
   const [types, setTypes] = useState([]);
@@ -13,15 +13,13 @@ function TypeList() {
   }, []);
 
   return (
-    <Container>
-      <h2 className="my-4">Tipi di Pokémon</h2>
-      <ListGroup>
-        {types.map(type => (
-          <ListGroup.Item key={type.name} action as={Link} to={`/type/${type.name}`}>
-            {type.name.toUpperCase()}
-          </ListGroup.Item>
-        ))}
-      </ListGroup>
+    <Container className="text-center mt-4">
+      <h2>Seleziona un Tipo</h2>
+      {types.map(type => (
+        <Link to={`/type/${type.name}`} key={type.name}>
+          <Button variant="secondary" className="m-2">{type.name.toUpperCase()}</Button>
+        </Link>
+      ))}
     </Container>
   );
 }
