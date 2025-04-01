@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import PokemonCard from '../components/PokemonCard';
-import { Container, Row } from 'react-bootstrap';
+import { Container, Row, Card } from 'react-bootstrap';
 
 function TypePage() {
   const { type } = useParams();
@@ -11,12 +10,24 @@ function TypePage() {
     fetch(`https://pokeapi.co/api/v2/type/${type}`)
       .then(response => response.json())
       .then(data => {
-        const filteredPokemon = data.pokemon.slice(0, 12).map(p => ({
-          id: p.pokemon.url.split('/')[6],
-          name: p.pokemon.name,
-          image: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${p.pokemon.url.split('/')[6]}.png`
-        }));
-        setPokemonList(filteredPokemon);
+        const updatedPokemonList = [];
+
+        data.pokemon.slice(0, 12).forEach(p => {
+          fetch(p.pokemon.url)
+            .then(response => response.json())
+            .then(details => {
+              updatedPokemonList.push({
+                id: details.id,
+                name: details.name,
+                image: details.sprites.front_default,
+              });
+
+              if (updatedPokemonList.length === 12) {
+                setPokemonList([...updatedPokemonList]);
+              }
+            })
+            .catch(error => console.error("Errore nel recupero del Pokémon:", error));
+        });
       })
       .catch(error => console.error("Errore nel recupero dei Pokémon per tipo:", error));
   }, [type]);
@@ -26,7 +37,12 @@ function TypePage() {
       <h2 className="my-4">Pokémon di tipo {type.toUpperCase()}</h2>
       <Row className="justify-content-center">
         {pokemonList.map(pokemon => (
-          <PokemonCard key={pokemon.id} pokemon={pokemon} />
+          <Card key={pokemon.id} style={{ width: '18rem', margin: '10px' }}>
+            <Card.Img variant="top" src={pokemon.image} />
+            <Card.Body>
+              <Card.Title>{pokemon.name.toUpperCase()}</Card.Title>
+            </Card.Body>
+          </Card>
         ))}
       </Row>
     </Container>
