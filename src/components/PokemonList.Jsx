@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
-import PokemonCard from './PokemonCard';
-import { Container, Row } from 'react-bootstrap';
+import { Container, Row, Card } from 'react-bootstrap';
 
 function PokemonList() {
   const [pokemonList, setPokemonList] = useState([]);
@@ -9,12 +8,20 @@ function PokemonList() {
     fetch('https://pokeapi.co/api/v2/pokemon?limit=151')
       .then(response => response.json())
       .then(data => {
-        const pokemonData = data.results.map((p, index) => ({
-          id: index + 1,
-          name: p.name,
-          image: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${index + 1}.png`
-        }));
-        setPokemonList(pokemonData);
+        const pokemonPromises = data.results.map((p, index) =>
+          fetch(`https://pokeapi.co/api/v2/pokemon/${index + 1}`)
+            .then(response => response.json())
+            .then(details => ({
+              id: index + 1,
+              name: details.name,
+              image: details.sprites.front_default,
+              height: details.height,
+              weight: details.weight,
+              types: details.types.map(t => t.type.name),
+            }))
+        );
+
+        Promise.all(pokemonPromises).then(results => setPokemonList(results));
       })
       .catch(error => console.error("Errore nel recupero dei Pokémon:", error));
   }, []);
@@ -23,7 +30,16 @@ function PokemonList() {
     <Container>
       <Row className="justify-content-center">
         {pokemonList.map(pokemon => (
-          <PokemonCard key={pokemon.id} pokemon={pokemon} />
+          <Card key={pokemon.id} style={{ width: '18rem', margin: '10px' }}>
+            <Card.Img variant="top" src={pokemon.image} />
+            <Card.Body>
+              <Card.Title>{pokemon.name.toUpperCase()}</Card.Title>
+              <p>ID: {pokemon.id}</p>
+              <p>Altezza: {pokemon.height}</p>
+              <p>Peso: {pokemon.weight}</p>
+              <p>Tipo: {pokemon.types.join(', ')}</p>
+            </Card.Body>
+          </Card>
         ))}
       </Row>
     </Container>
