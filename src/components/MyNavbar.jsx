@@ -1,4 +1,4 @@
-import { Navbar, Nav, Form, FormControl, Button, ListGroup } from 'react-bootstrap';
+import { Navbar, Nav, Form, FormControl, Button, ListGroup, Image } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 
@@ -14,6 +14,13 @@ function NavBar() {
       .then(res => res.json())
       .then(data => setAllPokemon(data.results));
   }, []);
+
+  // Funzione per ottenere l'URL dell'immagine del Pokémon
+  const getPokemonImageUrl = (name) => {
+    // Ottieni l'ID dal nome (considerando che i primi 151 hanno ID sequenziali)
+    const id = allPokemon.findIndex(p => p.name === name) + 1;
+    return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png`;
+  };
 
   // Aggiorna suggerimenti in base all’input
   const handleChange = (e) => {
@@ -70,7 +77,14 @@ function NavBar() {
                 action
                 key={p.name}
                 onClick={() => handleSuggestionClick(p.name)}
+                className="d-flex align-items-center" // Allinea immagine e testo
               >
+                <Image
+                  src={getPokemonImageUrl(p.name)}
+                  alt={p.name}
+                  roundedCircle
+                  style={{ width: '30px', height: '30px', marginRight: '10px' }}
+                />
                 {p.name}
               </ListGroup.Item>
             ))}
