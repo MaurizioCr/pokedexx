@@ -5,6 +5,7 @@ import PokemonList from './components/PokemonList';
 import TypeList from './components/TypeList';
 import TypePage from './components/TypePage';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import PokemonDetail from './components/PokemonDetail';
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
         <Route path="/pokemon" element={<PokemonList />} />
         <Route path="/types" element={<TypeList />} />
         <Route path="/type/:type" element={<TypePage />} />
+        <Route path="/pokemon/:id" element={<PokemonDetail />} />
       </Routes>
     </Router>
   );
