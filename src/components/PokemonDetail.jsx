@@ -24,6 +24,17 @@ function PokemonDetail() {
   if (!pokemon) return <div>Caricamento...</div>;
 
   return (
+    <Container className="text-center mt-4">
+      <Card style={{ width: '18rem', margin: '0 auto' }}>
+        <Card.Img variant="top" src={pokemon.image} />
+        <Card.Body>
+          <Card.Title>{pokemon.name.toUpperCase()}</Card.Title>
+          <p>Altezza: {pokemon.height}</p>
+          <p>Peso: {pokemon.weight}</p>
+          <p>Tipo: {pokemon.types.join(', ')}</p>
+        </Card.Body>
+      </Card>
+    </Container>
   );
 }
 
